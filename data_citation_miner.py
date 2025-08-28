@@ -86,12 +86,14 @@ class DataCitationMiner:
             r'\b(?:specifically|newly|originally)\s+(?:generated|created|collected|developed)\b',
             r'\b(?:raw|processed)\s+data\s+(?:generated|collected|produced|created)\b',
             r'\bmade\s+(?:publicly\s+)?available\s+(?:for\s+the\s+first\s+time|through\s+this\s+(?:paper|study))\b',
+            r'\bpublicly\s+available\s+for\s+the\s+first\s+time\b',
             r'\boriginal\s+(?:data|dataset|contribution)\b',
             r'\b(?:supplementary|supporting)\s+(?:data|materials|information)\b',
             r'\bdeposited\s+(?:at|in|to)\b',
             r'\buploaded\s+(?:to|at)\b',
             r'\bnovel\s+dataset\b',
             r'\bgenerated\s+(?:specifically\s+)?for\s+this\s+study\b',
+            r'\bthrough\s+this\s+(?:paper|study|work)\b',
         ]
         
         # Secondary classification indicators  
@@ -208,41 +210,42 @@ class DataCitationMiner:
         if dataset_id.startswith('https://doi.org/'):
             doi_prefix = dataset_id.replace('https://doi.org/', '').split('/')[0]
             
-            # Known data repository = likely Primary
+            # Known data repository = likely Primary (strong indicator)
             if doi_prefix in self.data_repository_prefixes:
-                # But check for secondary indicators
+                # Only override for strong secondary indicators
                 secondary_score = sum(1 for pattern in self.secondary_indicators 
                                     if re.search(pattern, context_lower))
-                if secondary_score > 0:
+                # Need strong evidence to override repository classification
+                if secondary_score > 2:  # Changed from >= 2 to > 2
                     return 'Secondary'
                 return 'Primary'
             
-            # Known publisher = likely Secondary  
+            # Known publisher = likely Secondary (strong indicator)  
             if doi_prefix in self.publisher_prefixes:
-                # But check for primary indicators
+                # Only override for strong primary indicators
                 primary_score = sum(1 for pattern in self.primary_indicators 
                                   if re.search(pattern, context_lower))
-                if primary_score > 0:
+                # Need strong evidence to override publisher classification
+                if primary_score >= 2:
                     return 'Primary'
                 return 'Secondary'
         
-        # Check primary indicators in context
+        # For unknown DOI prefixes or accession IDs, use context analysis
         primary_score = sum(1 for pattern in self.primary_indicators 
                           if re.search(pattern, context_lower))
         
-        # Check secondary indicators in context
         secondary_score = sum(1 for pattern in self.secondary_indicators 
                             if re.search(pattern, context_lower))
         
-        # Decision based on scores
-        if primary_score > secondary_score:
+        # Decision based on scores with confidence thresholds
+        if primary_score > secondary_score + 1:  # Primary needs stronger signal
             return 'Primary'
         elif secondary_score > primary_score:
             return 'Secondary'
         else:
             # Default classification based on identifier type
             if dataset_id.startswith('https://doi.org/'):
-                return 'Primary'  # DOIs default to Primary
+                return 'Primary'  # Unknown DOIs default to Primary
             else:
                 return 'Secondary'  # Accession IDs default to Secondary
 

@@ -1,0 +1,8 @@
+row_id,article_id,dataset_id,type
+0,10.1234/demo.paper,https://doi.org/10.1038/nature12345,Secondary
+1,10.1234/demo.paper,https://doi.org/10.5281/zenodo.7777777,Primary
+2,10.1234/demo.paper,ChEMBL1234567,Secondary
+3,10.1234/demo.paper,2DEF,Secondary
+4,10.1234/demo.paper,GSE55555,Secondary
+5,10.1234/demo.paper,1ABC,Secondary
+6,10.1234/demo.paper,PRJNA123456,Primary
