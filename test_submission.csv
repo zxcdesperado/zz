@@ -1,0 +1,11 @@
+row_id,article_id,dataset_id,type
+0,10.1234/test.paper.1,https://doi.org/10.5281/zenodo.1234567,Primary
+1,10.1234/test.paper.1,1ABC,Primary
+2,10.1234/test.paper.1,PRJNA123456,Primary
+3,10.1234/test.paper.1,1XYZ,Primary
+4,10.1234/test.paper.2,https://doi.org/10.1038/nature12345,Secondary
+5,10.1234/test.paper.2,ChEMBL1234567,Secondary
+6,10.1234/test.paper.2,GSE12345,Secondary
+7,10.1234/test.paper.3,https://doi.org/10.5061/dryad.abc123,Primary
+8,10.1234/test.paper.3,https://doi.org/10.6084/m9.figshare.999888,Primary
+9,10.1234/test.paper.3,MTBLS5678,Primary
